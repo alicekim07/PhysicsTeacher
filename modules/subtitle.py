@@ -1,18 +1,9 @@
 import os
 import re
 from moviepy import AudioFileClip
-from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv()
-
 client = OpenAI()
-
-SCRIPT_DIR = "scripts"
-AUDIO_DIR = "audio"
-SUB_DIR = "subs"
-
-os.makedirs(SUB_DIR, exist_ok=True)
 
 def split_sentence(text):
     """
@@ -29,7 +20,7 @@ def sec_to_srt_time(sec):
     ms = int((sec - int(sec)) * 1000)
     return f"{h:02}:{m:02}:{s:02},{ms:03}"
 
-def make_srt(script_path, audio_path, out_path):
+def make_srt_from_script(script_path: str, audio_path: str, out_path: str):
     # 스크립트 로드
     with open(script_path, "r", encoding="utf-8") as f:
         text = f.read()
@@ -68,6 +59,39 @@ def make_srt_api(audio_path, out_path):
 
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(srt_text)
+
+
+def audio_to_subs(
+    audio_dir: str,
+    subs_dir: str,
+    method: str = "api", # "api" or "heuristic"
+    scripts_dir: str | None = None
+):
+    for fname in sorted(os.listdir(audio_dir)):
+        if not fname.endswith(".mp3"):
+            continue
+
+        base = fname.replace(".mp3", "")
+        audio_path = os.path.join(audio_dir, fname)
+        out_path = os.path.join(subs_dir, base + ".srt")
+
+        if method == "api":
+            make_srt_api(audio_path, out_path)
+
+        elif method == "heuristic":
+            if scripts_dir is None:
+                raise ValueError("heuristic 방식은 scripts_dir가 필요합니다")
+            
+            script_path = os.path.join(scripts_dir, base + ".txt")
+            make_srt_from_script(script_path, audio_path, out_path)
+
+        else:
+            raise ValueError(f"Unknown method: {method}")
+        
+        print(f"[subs] {out_path} 생성 완료")
+
+
+
 
 def main():
     for fname in os.listdir(AUDIO_DIR):
