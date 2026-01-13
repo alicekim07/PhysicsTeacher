@@ -19,6 +19,7 @@ def get_output_dirs(pdf_name: str):
         "subs": base / "subs",
         "highlights": base / "highlights",
         "video": base / "video",
+        "notes": base / "notes",
     }
     for d in dirs.values():
         d.mkdir(parents=True, exist_ok=True)

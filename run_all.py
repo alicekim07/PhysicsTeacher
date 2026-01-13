@@ -1,26 +1,39 @@
 from dotenv import load_dotenv 
 load_dotenv()
 from config import PPTX_DIR, PDF_DIR, get_output_dirs
-from modules.pptx import pptx_to_pdf
+from modules.pptx import pptx_to_pdf, extract_notes_from_pptx
 from modules.image import pdf_to_images
 from modules.script import slides_to_scripts
+from modules.context import prepare_professor_style
 from modules.tts import scripts_to_audio
 from modules.subtitle import audio_to_subs
 from modules.video import make_video, concat_videos
 
 
-
 def ensure_pdf_from_pptx():
     for pptx in PPTX_DIR.glob("*.pptx"):
-        pdf_path = PDF_DIR / (pptx.stem + ".pdf")
+        pdf_name = pptx.stem
+        pdf_path = PDF_DIR / f"{pdf_name}.pdf"
 
+        # output dirs 확보
+        dirs = get_output_dirs(pdf_name)
+        notes_dir = dirs["notes"]
+        notes_path = notes_dir / "raw_notes.txt"
+
+        # 1. PPTX -> notes
+        if not notes_path.exists():
+            notes_text = extract_notes_from_pptx(str(pptx))
+            with open(notes_path, "w", encoding="utf-8") as f:
+                f.write(notes_text)
+
+        # 2. PPTX -> PDF
         if not pdf_path.exists():
             pptx_to_pdf(
                 pptx_path=str(pptx),
                 pdf_dir=str(PDF_DIR)
             )
 
-def process_pdf(pdf_path):
+def process_pdf(pdf_path, professor_style):
     pdf_name = pdf_path.stem # 확장자 제거한 파일명
     dirs = get_output_dirs(pdf_name)
 
@@ -33,7 +46,8 @@ def process_pdf(pdf_path):
     # 2. Slides -> Scripts
     slides_to_scripts(
         slides_dir=str(dirs["slides"]),
-        scripts_dir=str(dirs["scripts"])
+        scripts_dir=str(dirs["scripts"]),
+        professor_style=professor_style
     )
 
     # 3. Scripts -> Audio
@@ -79,7 +93,14 @@ def main():
 
     # 1단계부터
     for pdf in PDF_DIR.glob("*.pdf"):
-        process_pdf(pdf)
+        pdf_name = pdf.stem # 확장자 제거한 파일명
+        dirs = get_output_dirs(pdf_name)
+
+        professor_style = prepare_professor_style(
+            dirs["notes"] / "raw_notes.txt"
+        )
+
+        process_pdf(pdf, professor_style)
 
 
 if __name__ == "__main__":
