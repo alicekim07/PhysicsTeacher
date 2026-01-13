@@ -60,7 +60,8 @@ def process_pdf(pdf_path, professor_style):
     audio_to_subs(
         audio_dir=str(dirs["audio"]),
         subs_dir=str(dirs["subs"]),
-        method="api"
+        method="api_replace",
+        scripts_dir=str(dirs["scripts"])
     )
 
     # 5. Slids + Audio + Subs -> Video (슬라이드별)

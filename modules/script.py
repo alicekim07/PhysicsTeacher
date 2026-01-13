@@ -169,6 +169,33 @@ def _debug_print_json(obj, max_len=5000):
     s = json.dumps(obj, ensure_ascii=False, indent=2)
     print(s[:max_len] + ("..." if len(s) > max_len else ""))
 
+def summarize_for_context(script_text):
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": """
+                다음 강의 발화를 다음 슬라이드에서 이어서 설명하기 위해,
+                이미 설명한 핵심만 두세 문장으로 요약하라.
+
+                규칙:
+                - 수학 기호, 알파벳 물리량, 약어 사용 금지
+                - 말하기용 접속사 제거 ('자', '이제', '먼저' 등)
+                - 내용 정보만 중립적으로 요약할 것
+                - 두세 문장 이내로 요약할 것
+                """
+
+            },
+            {
+                "role": "user",
+                "content": script_text
+            }
+        ],
+        temperature=0.2
+    )
+    return response.choices[0].message.content.strip()
+
 # 1. OCR 추출
 def extract_text_from_image(slide_path: str, model: str = "gpt-4o", temperature: float = 0.0) -> dict:
     """
@@ -388,33 +415,7 @@ def generate_script(
 
     return response.choices[0].message.content.strip()
 
-def summarize_for_context(script_text):
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {
-                "role": "system",
-                "content": """
-                다음 강의 발화를 다음 슬라이드에서 이어서 설명하기 위해,
-                이미 설명한 핵심만 두세 문장으로 요약하라.
-
-                규칙:
-                - 수학 기호, 알파벳 물리량, 약어 사용 금지
-                - 말하기용 접속사 제거 ('자', '이제', '먼저' 등)
-                - 내용 정보만 중립적으로 요약할 것
-                - 두세 문장 이내로 요약할 것
-                """
-
-            },
-            {
-                "role": "user",
-                "content": script_text
-            }
-        ],
-        temperature=0.2
-    )
-    return response.choices[0].message.content.strip()
-
+# 5. Pipeline
 def slides_to_scripts(slides_dir: str, scripts_dir: str, professor_style: dict):
     slides = sorted(f for f in os.listdir(slides_dir) if f.endswith(".png"))
     total_slides = len(slides)
@@ -451,8 +452,6 @@ def slides_to_scripts(slides_dir: str, scripts_dir: str, professor_style: dict):
 
         previous_context = summarize_for_context(script_text)
         print(f"[script] {script_name} 생성 완료")
-
-
 
 if __name__ == "__main__":
     test_slide_path = "../slide_09.png"
