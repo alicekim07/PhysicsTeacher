@@ -38,6 +38,7 @@ AI를 활용해 **강의 스크립트 -> 음성 -> 자막 -> 강의 영상**을 
 
 ## 프로젝트 구조
 
+```text
 PHYSICSTEACHER/
 ├── README.md
 ├── run_all.py            # 전체 파이프라인 실행 스크립트
@@ -65,6 +66,8 @@ PHYSICSTEACHER/
 │   ├── video.py          # 영상 생성 및 병합
 │   └── concat_all.py     # 전체 영상 병합 보조
 └── __pycache__/
+```
+
 
 ---
 
