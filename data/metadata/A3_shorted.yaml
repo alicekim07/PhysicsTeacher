@@ -1,0 +1,46 @@
+slides:
+
+  slide_01.png:
+    stage: INTRO
+    intent: present the title, author, and context of the invited conference talk
+    forbidden:
+      - do not explain the scientific background
+      - do not describe the technique
+      - do not mention experimental results
+      - do not frame the topic as surprising or anomalous
+
+  slide_02.png:
+    stage: INTRO
+    intent: introduce sum-frequency vibrational spectroscopy as an interface-specific probe
+    forbidden:
+      - do not describe the experimental setup in detail
+      - do not discuss any specific system studied in this work
+      - do not mention salts, ions, or anomalous behavior
+      - do not present results
+
+  slide_03.png:
+    stage: METHOD
+    intent: give a high-level overview of the optical setup used for sum-frequency measurements
+    forbidden:
+      - do not explain nonlinear optical theory in detail
+      - do not interpret spectra
+      - do not discuss results or trends
+      - do not introduce conclusions
+
+  slide_04.png:
+    stage: OBSERVATION
+    intent: demonstrate how sum-frequency spectra reflect molecular ordering at charged and uncharged interfaces
+    forbidden:
+      - do not describe this behavior as anomalous
+      - do not discuss salt effects or ion specificity
+      - do not propose microscopic mechanisms
+      - do not generalize beyond the shown systems
+
+  slide_05.png:
+    stage: OBSERVATION
+    intent: illustrate the qualitative difference between randomly oriented and field-aligned interfacial water
+    forbidden:
+      - do not introduce quantitative analysis yet
+      - do not explain how the alignment is measured
+      - do not discuss anomalous signal enhancement
+      - do not mention later results involving salts

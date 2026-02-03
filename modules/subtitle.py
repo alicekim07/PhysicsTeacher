@@ -55,7 +55,7 @@ def make_srt_api(audio_path, out_path):
             file=f,
             model="whisper-1",
             response_format="srt",
-            language="ko"
+            #language="ko"
         )
 
     with open(out_path, "w", encoding="utf-8") as f:

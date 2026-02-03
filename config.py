@@ -7,6 +7,7 @@ DATA_DIR = PROJECT_ROOT / "data"
 PPTX_DIR = DATA_DIR / "pptx"    # 원본 입력
 PDF_DIR = DATA_DIR / "pdf"      # 중간 입력
 OUTPUT_DIR = DATA_DIR / "outputs"
+METADATA_DIR = DATA_DIR / "metadata"
 
 def get_output_dirs(pdf_name: str):
     base = OUTPUT_DIR / pdf_name

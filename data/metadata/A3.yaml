@@ -1,0 +1,216 @@
+slides:
+
+  slide_01.png:
+    stage: INTRO
+    intent: present the title, author, affiliation, and context of the invited conference talk
+    forbidden:
+      - do not explain the scientific background
+      - do not describe the technique
+      - do not mention experimental results
+      - do not frame the topic as anomalous or surprising
+      - do not mention signal increase or decrease
+
+  slide_02.png:
+    stage: INTRO
+    intent: introduce sum-frequency vibrational spectroscopy as an interface-specific probe
+    forbidden:
+      - do not describe the experimental setup
+      - do not discuss any specific system studied in this work
+      - do not mention salts or ions
+      - do not mention results or trends
+
+  slide_03.png:
+    stage: METHOD
+    intent: give a high-level overview of the optical setup used for sum-frequency measurements
+    forbidden:
+      - do not explain nonlinear optical theory in detail
+      - do not interpret spectra
+      - do not mention results or conclusions
+      - do not explain why the results are important
+
+  slide_04.png:
+    stage: OBSERVATION
+    intent: show how sum-frequency spectra reflect molecular ordering in fatty acid monolayers as pH changes
+    forbidden:
+      - do not describe the behavior as anomalous
+      - do not discuss salt effects
+      - do not propose mechanisms
+      - do not generalize beyond the shown system
+
+  slide_05.png:
+    stage: OBSERVATION
+    intent: illustrate the conceptual difference between randomly oriented and field-aligned interfacial water
+    forbidden:
+      - do not introduce quantitative analysis
+      - do not explain how alignment is measured
+      - do not discuss salt effects
+      - do not mention anomalous behavior
+
+  slide_06.png:
+    stage: OBSERVATION
+    intent: compare sum-frequency spectra of neutral and cationic Langmuir monolayers in the OH region
+    forbidden:
+      - do not discuss ion specificity
+      - do not explain the origin of differences
+      - do not mention co-ion or counterion effects
+
+  slide_07.png:
+    stage: RESULT
+    intent: introduce the concept of co-ion effects in DPTAP monolayers
+    forbidden:
+      - do not present detailed data
+      - do not explain mechanisms
+      - do not draw conclusions
+
+  slide_08.png:
+    stage: RESULT
+    intent: show that anion adsorption reduces the OH signal at positively charged interfaces
+    forbidden:
+      - do not compare with fluoride salts
+      - do not propose mechanisms
+      - do not generalize beyond this observation
+
+  slide_09.png:
+    stage: RESULT
+    intent: demonstrate strong ion-specific differences between chloride and iodide adsorption
+    forbidden:
+      - do not discuss fluoride behavior
+      - do not propose microscopic explanations
+      - do not summarize overall trends
+
+  slide_10.png:
+    stage: RESULT
+    intent: present the anomalous increase of the OH signal upon LiF addition
+    forbidden:
+      - do not explain the mechanism
+      - do not compare with other alkali fluorides
+      - do not draw conclusions
+
+  slide_11.png:
+    stage: RESULT
+    intent: show similar anomalous OH signal enhancement for NaF
+    forbidden:
+      - do not interpret the trend
+      - do not compare with LiF quantitatively
+      - do not discuss mechanisms
+
+  slide_12.png:
+    stage: RESULT
+    intent: show the absence of OH signal enhancement for KF
+    forbidden:
+      - do not explain why KF behaves differently
+      - do not introduce hydration or ion pairing concepts
+      - do not summarize trends
+
+  slide_13.png:
+    stage: RESULT
+    intent: visually compare OH signal behavior for KF, NaF, and LiF
+    forbidden:
+      - do not interpret the comparison
+      - do not generalize trends
+      - do not propose explanations
+
+  slide_14.png:
+    stage: RESULT
+    intent: summarize salt-dependent OH signal trends across different anions and co-ions
+    forbidden:
+      - do not propose mechanisms
+      - do not introduce new concepts
+      - do not resolve the observed anomaly
+
+  slide_15.png:
+    stage: OBSERVATION
+    intent: compare OH signals from cationic and anionic lipid monolayers on pure water
+    forbidden:
+      - do not explain the origin of the difference
+      - do not mention bicarbonate or CO2
+      - do not propose mechanisms
+
+  slide_16.png:
+    stage: INTERPRETATION
+    intent: attribute differences in OH signal to dissolved CO2 and bicarbonate formation in water
+    forbidden:
+      - do not discuss fluoride effects
+      - do not generalize to other systems
+      - do not speculate beyond this explanation
+
+  slide_17.png:
+    stage: INTERPRETATION
+    intent: show how equilibration with atmospheric CO2 affects reproducibility of OH signals
+    forbidden:
+      - do not introduce new mechanisms
+      - do not discuss salt effects
+      - do not generalize broadly
+
+  slide_18.png:
+    stage: INTERPRETATION
+    intent: propose a model involving bicarbonate binding and co-ion-dependent removal from the Stern layer
+    forbidden:
+      - do not claim this model is definitive
+      - do not discuss hydration shell size in detail
+      - do not introduce new experimental evidence
+
+  slide_19.png:
+    stage: INTERPRETATION
+    intent: explain the role of ion hydration and Stern versus diffuse layer formation
+    forbidden:
+      - do not introduce new data
+      - do not over-quantify the model
+      - do not generalize to all ions
+
+  slide_20.png:
+    stage: CONCLUSION
+    intent: summarize the two main findings of the study
+    forbidden:
+      - do not introduce new results
+      - do not propose new mechanisms
+      - do not discuss future work
+
+  slide_21.png:
+    stage: DISCUSSION
+    intent: motivate future studies on other alkali metal cations based on bicarbonate binding trends
+    forbidden:
+      - do not claim validation of the hypothesis
+      - do not overstate predictive power
+
+  slide_22.png:
+    stage: RESULT
+    intent: show that DODAB monolayers reproduce LiF and NaF anomalous behavior
+    forbidden:
+      - do not generalize beyond this system
+      - do not explain mechanisms
+
+  slide_23.png:
+    stage: RESULT
+    intent: show that RbF and CsF also induce OH signal enhancement in DODAB
+    forbidden:
+      - do not explain why Rb and Cs behave differently
+      - do not revise previous hypotheses
+
+  slide_24.png:
+    stage: RESULT
+    intent: summarize OH intensity trends for DODAB across different fluoride salts
+    forbidden:
+      - do not propose mechanisms
+      - do not generalize beyond DODAB
+
+  slide_25.png:
+    stage: INTERPRETATION
+    intent: revise the original hypothesis in light of RbF and CsF results
+    forbidden:
+      - do not claim a final explanation
+      - do not overstate confidence
+
+  slide_26.png:
+    stage: CONCLUSION
+    intent: present a revised conceptual summary of co-ion effects
+    forbidden:
+      - do not introduce new data
+      - do not propose unresolved mechanisms
+
+  slide_27.png:
+    stage: CONCLUSION
+    intent: acknowledge collaborators and conclude the presentation
+    forbidden:
+      - do not introduce scientific content
+      - do not summarize results again

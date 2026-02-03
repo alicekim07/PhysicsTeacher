@@ -1,6 +1,6 @@
 from dotenv import load_dotenv 
 load_dotenv()
-from config import PPTX_DIR, PDF_DIR, get_output_dirs
+from config import PPTX_DIR, PDF_DIR, METADATA_DIR, get_output_dirs
 from modules.pptx import pptx_to_pdf, extract_notes_from_pptx
 from modules.image import pdf_to_images
 from modules.script import slides_to_scripts
@@ -8,7 +8,7 @@ from modules.context import prepare_professor_style
 from modules.tts import scripts_to_audio
 from modules.subtitle import audio_to_subs
 from modules.video import make_video, concat_videos
-
+from modules.metadata import load_slide_metadata
 
 def ensure_pdf_from_pptx():
     for pptx in PPTX_DIR.glob("*.pptx"):
@@ -37,6 +37,13 @@ def process_pdf(pdf_path, professor_style):
     pdf_name = pdf_path.stem # 확장자 제거한 파일명
     dirs = get_output_dirs(pdf_name)
 
+    # 1. Load slide metadata
+    metadata_path = METADATA_DIR / f"{pdf_name}.yaml"
+    if not metadata_path.exists():
+        raise FileNotFoundError(f"No metadata file for lecture: {pdf_name}")
+    
+    slide_metadata_map = load_slide_metadata(metadata_path)
+
     # 1. PDF -> Slides
     pdf_to_images(
         pdf_path=str(pdf_path),
@@ -47,7 +54,8 @@ def process_pdf(pdf_path, professor_style):
     slides_to_scripts(
         slides_dir=str(dirs["slides"]),
         scripts_dir=str(dirs["scripts"]),
-        professor_style=professor_style
+        professor_style=professor_style,
+        slide_metadata_map=slide_metadata_map
     )
 
     # 3. Scripts -> Audio
@@ -60,7 +68,7 @@ def process_pdf(pdf_path, professor_style):
     audio_to_subs(
         audio_dir=str(dirs["audio"]),
         subs_dir=str(dirs["subs"]),
-        method="api_replace",
+        method="api",
         scripts_dir=str(dirs["scripts"])
     )
 

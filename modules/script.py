@@ -9,66 +9,76 @@ client = OpenAI()
 
 # 프롬프트
 SYSTEM_PROMPT = """
-    너는 대학교 물리학 교수다.
-    칠판 앞에서 학생들에게 말로 설명하듯 강의한다.
+    You are a researcher giving an invited conference talk.
 
-    이 텍스트는 사람이 읽는 문서가 아니라,
-    TTS로 음성 변환되어 강의 영상에서 재생된다.
+    You are speaking to chemists and physicists who have working knowledge
+    of spectroscopy and interfacial science, but are not familiar with
+    sum-frequency spectroscopy.
 
-    학생 수준:
-    - 물리학 전공자이므로 개념적 사고는 가능하다
-    - 그러나 수학 기호와 수식에 의존한 설명은 이해하지 못한다
+    This is NOT a lecture for students.
+    This is a scientific presentation to professional peers.
 
-    매우 중요:
-    이 강의에서는 수학 기호를 전혀 사용하지 않는다.
-    수식, 기호, 약어가 하나라도 등장하면 실패다.
+    Your role:
+    - Speak as an active researcher presenting your own work.
+    - Guide the audience through the talk slide by slide.
+    - Respect the logical and temporal order of the presentation.
 
-    절대 사용 금지:
-    - 모든 수학 기호와 약어
-    - 알파벳으로 된 물리량 이름
-    - C, V, P, f 같은 문자 단독 사용
-    - 등호, 분수, 미분, 합 기호
-    - 괄호 안에 기호 설명
+    CRITICAL RULE:
+    Each slide has strict metadata defining what is allowed and forbidden.
+    You MUST follow the slide metadata exactly.
+    Mentioning any forbidden content is considered a failure.
 
-    반드시 말로 풀어 설명할 것:
-    - “일정한 부피에서 열을 얼마나 잘 저장하는지 나타내는 성질”
-    - “압력을 일정하게 유지하면서 열을 넣어줄 때의 성질”
-    - “움직임의 자유로운 방향의 개수”
-    처럼 완전한 문장으로 설명하라.
+    🔧 STAGE-DEPENDENT HARD CONSTRAINTS:
+    - If the slide stage is INTRO or METHOD:
+    - You MUST NOT describe results, trends, signal changes,
+        unexpected behavior, or conclusions,
+        even in general or qualitative terms.
+    - Words such as "unexpected", "anomalous", "increase", "decrease",
+    or any implication of outcome are forbidden unless explicitly allowed.
 
-    강의 스타일 규칙:
-    - 정의부터 말하지 말고, 먼저 상황과 직관을 설명하라
-    - 교재 문장처럼 딱딱하게 말하지 말라
-    - 설명 중 최소 한 번은 교수 스스로의 판단이나 선택(왜 이 방식으로 설명하는지, 왜 이 개념이 중요한지)을 드러내라
-    - 학생들이 흔히 헷갈리는 지점을 교수가 미리 짚어 주는 문장을 포함하라
-    - 정리된 발표문이 아니라, 생각을 정리해 가며 설명하는 흐름을 유지하라
-    - 한 슬라이드를 설명하는 분량을 넘기지 말 것
-    - 슬라이드에 없는 내용을 추측하거나 확장하지 말 것
+    Your goals for each slide:
+    - Explain only what this slide is intended to establish.
+    - Help the audience understand why this slide exists at this point
+    in the talk.
+    - Do NOT anticipate results, surprises, or conclusions from later slides
+    unless explicitly allowed.
 
-    출력 전 마지막으로 스스로 검사해라:
-    - 수학 기호가 있는가?
-    - 알파벳 기호로 된 물리량 표현이 있는가?
-    하나라도 있으면 다시 고쳐서 출력해라.
+    Style requirements:
+    - Speak naturally, as in a live conference presentation.
+    - Do not sound like a textbook or a review article.
+    - Do not over-explain concepts the audience is assumed to know.
 
-    강의 영상용 슬라이드 스크립트이므로
-    '다음 시간에는', '다음 강의에서는' 같은
-    시간을 넘기는 표현은 절대 사용하지 말 것.
+    Technical language:
+    - Use standard scientific terminology common in spectroscopy.
+    - Avoid equations and formal derivations.
+    - Focus on physical intuition and experimental logic.
 
-    강의 중간 슬라이드에서는
-    문장의 시작에 '자,', '자 이제', '자 그럼' 같은
-    구어체 접속사를 절대 사용하지 말 것.
+    Important constraints:
+    - Do NOT invent data, mechanisms, or conclusions.
+    - Do NOT summarize the entire talk in one slide.
+    - Treat each slide as a fixed temporal boundary.
+
+    This script will be used for AI-generated voice narration.
+    Write in clear, spoken English suitable for a live scientific talk.
 """
 
 USER_PROMPT = """
-    아래 제공된 정보와 지침을 바탕으로,
-    교수가 실제 수업 시간에 말하는 것처럼
-    강의 영상용 음성 스크립트를 작성하라.
+    Based on the slide content and the slide metadata provided,
+    write a spoken script as if you are presenting this slide
+    at a scientific conference.
 
-    중요:
-    - 기호나 수식을 사용하지 말 것
-    - 모든 개념은 말로 풀어 설명할 것
-    - 학생이 왜 이 개념을 배워야 하는지
-    자연스럽게 느낄 수 있도록 설명할 것
+    Guidelines:
+    - Focus on what the audience should notice in THIS slide.
+    - Explain why this slide is needed at this point in the talk.
+    - Describe something as surprising or counterintuitive
+    ONLY if the slide metadata explicitly allows it.
+
+    Do not:
+    - Read the slide text verbatim.
+    - Turn the explanation into a classroom lecture.
+    - Add background, results, or conclusions belonging to other slides.
+
+    Maintain a natural speaking rhythm appropriate for a live talk.
 """
 
 OCR_SYSTEM = """
@@ -176,14 +186,22 @@ def summarize_for_context(script_text):
             {
                 "role": "system",
                 "content": """
-                다음 강의 발화를 다음 슬라이드에서 이어서 설명하기 위해,
-                이미 설명한 핵심만 두세 문장으로 요약하라.
+                    You are preparing a brief context reminder
+                    for the next slide in a scientific presentation.
 
-                규칙:
-                - 수학 기호, 알파벳 물리량, 약어 사용 금지
-                - 말하기용 접속사 제거 ('자', '이제', '먼저' 등)
-                - 내용 정보만 중립적으로 요약할 것
-                - 두세 문장 이내로 요약할 것
+                    Summarize only what has already been explicitly stated,
+                    focusing on factual content, not interpretation.
+
+                    Rules:
+                    - Do NOT explain why the content is important.
+                    - Do NOT describe implications, significance, or conclusions.
+                    - Do NOT introduce expectations or future results.
+                    - Do NOT use evaluative language (e.g., surprising, important, interesting).
+                    - Do NOT use equations, symbols, or abbreviations.
+
+                    Write in neutral, descriptive language.
+                    Remove conversational fillers.
+                    Limit the summary to two or three short sentences.
                 """
 
             },
@@ -261,7 +279,15 @@ def extract_slide_semantics(ocr: dict) -> dict:
     )
 
     text = resp.choices[0].message.content.strip()
-    return json.loads(text)
+
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return {
+            "raw_text": ocr,
+            "summary": text,
+            "note": "fallback semantic extraction"
+        }
 
 # 3. Context Alignment Agent
 def align_contexts(slide_semantics: dict, professor_style: dict) -> dict:
@@ -300,7 +326,8 @@ def generate_script(
     alignment: dict,
     previous_context: str,
     slide_index: int,
-    total_slides: int
+    total_slides: int,
+    slide_metadata: dict | None = None
 ):
     """
     Generate lecture script from:
@@ -309,7 +336,23 @@ def generate_script(
     - previous_context: 앞 슬라이드 요약
     """
 
-    # 1. Alignment 규칙 블록
+    # 1. 슬라이드 Metadata 블록
+    metadata_block = f"""
+    [Slide role and constraints]
+    - Presentation stage: {slide_metadata.get("stage")}
+
+    - Purpose of this slide:
+    {slide_metadata.get("intent")}
+
+    - Strict constraints for this slide:
+    {chr(10).join("- " + f for f in slide_metadata.get("forbidden", []))}
+
+    You must strictly follow these constraints.
+    Do not mention topics that are forbidden at this stage,
+    even if they appear related to the slide content.
+    """
+
+    # 2. Alignment 규칙 블록
     alignment_block = f"""
     [설명 지침]
     - 전체 설명 방향
@@ -324,49 +367,49 @@ def generate_script(
     위 지침을 반드시 따를 것.
     """
 
-    # 2. 강의 흐름 지침
+    # 3. 강의 흐름 지침
     if slide_index == 0:
         flow_block = """
-            이제 막 강의를 시작하는 첫 슬라이드다.
-            
-            자연스럽게 상황이나 문제의 맥락부터 꺼내라.
-            오늘 다룰 개념이 왜 필요한지 직관적으로 느끼게 하라.
+            This is the opening slide of the talk.
 
-            마지막 문장은
-            해답을 주기보다는
-            생각해볼 관점 하나를 던지는 정도로 끝내라
-    
+            Begin by setting the context of the problem or system,
+            without introducing results or conclusions.
+
+            Speak at a measured pace, as the audience is still orienting
+            to the topic and terminology.
+
+            End the slide by pointing to the aspect of the system
+            that will be examined next, without answering it.
         """
 
     elif slide_index < total_slides - 1:
         flow_block = """
-            지금은 강의의 중간이다.
+            This slide is part of the main body of the talk.
 
-            도입 멘트 없이
-            이전 설명에서 자연스럽게 이어서
-            개념 설명을 계속하라.
+            Continue naturally from the previous slide,
+            without reintroducing the topic or restating the motivation.
 
-            이 슬라이드는 강의 흐름의 일부이므로
-            정의, 요약, 평가, 예고로 끝내지 말 것.
+            Focus on explaining what is shown on this slide,
+            and stop once the intended point has been made.
 
-            설명이 이어지다가
-            개념이 충분히 전달된 시점에서
-            자연스럽게 멈춰라.
+            Do not conclude, summarize, or preview later results.
         """
 
     else:
         flow_block = """
-            지금은 강의의 마지막 슬라이드다.
+            This is the final slide of the talk.
 
-            강의를 끝낸다는 표현이나 시간 흐름을 언급하는 말은 사용하지 말 것.
+            Speak calmly and deliberately.
 
-            지금까지 설명한 개념이 전체 흐름에서 어떤 위치를 차지하는지만 짚어라.
+            Indicate how the content of this slide fits into
+            the overall narrative of the presentation,
+            without introducing new interpretations or future directions.
 
-            새로운 동기 부여나 예고 없이, 의미가 남는 한두 문장으로 조용히 설명을 마무리하라.
+            End without signaling the end of the talk explicitly.
         """
 
 
-    # 3. 이전 슬라이드 연결
+    # 4. 이전 슬라이드 연결
     previous_block = ""
     if previous_context:
         previous_block = f"""
@@ -374,13 +417,13 @@ def generate_script(
             {previous_context}
         """
 
-    # 4. 슬라이드 의미 정보
+    # 5. 슬라이드 의미 정보
     semantic_block = f"""
         [이번 슬라이드 핵심 개념 요약]
         {json.dumps(slide_semantics, ensure_ascii=False, indent=2)}
     """
 
-    # 5. 메시지 구성
+    # 6. 메시지 구성
     messages = [
         {
             "role": "system",
@@ -389,7 +432,9 @@ def generate_script(
         {
             "role": "assistant",
             "content": (
-                alignment_block
+                metadata_block
+                + "\n"
+                + alignment_block
                 + "\n"
                 + flow_block
                 + "\n"
@@ -406,7 +451,7 @@ def generate_script(
         }
     ]
 
-    # 6. LLM 호출
+    # 7. LLM 호출
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=messages,
@@ -416,7 +461,7 @@ def generate_script(
     return response.choices[0].message.content.strip()
 
 # 5. Pipeline
-def slides_to_scripts(slides_dir: str, scripts_dir: str, professor_style: dict):
+def slides_to_scripts(slides_dir: str, scripts_dir: str, professor_style: dict, slide_metadata_map : dict):
     slides = sorted(f for f in os.listdir(slides_dir) if f.endswith(".png"))
     total_slides = len(slides)
 
@@ -427,7 +472,7 @@ def slides_to_scripts(slides_dir: str, scripts_dir: str, professor_style: dict):
 
         # 1) OCR
         ocr = extract_text_from_image(slide_path)
-
+ 
         # 2) Semantics
         sem = extract_slide_semantics(ocr)
 
@@ -435,12 +480,17 @@ def slides_to_scripts(slides_dir: str, scripts_dir: str, professor_style: dict):
         alignment = align_contexts(sem, professor_style)
 
         # 4) Script
+        current_metadata = slide_metadata_map.get(slide)
+        if current_metadata is None:
+            raise ValueError(f"Slide metadata not found for {slide}")
+
         script_text = generate_script(
             slide_semantics=sem,
             alignment=alignment,
             previous_context=previous_context,
             slide_index=idx,
-            total_slides=total_slides
+            total_slides=total_slides,
+            slide_metadata=current_metadata
         )
 
         # 5) Save script
